@@ -1,20 +1,6 @@
+use crate::card::{Card, Suit, Rank};
+
 type Result<T> = std::result::Result<T, String>;
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Suit {
-    Spades,
-    Clubs,
-    Hearts,
-    Diamonds,
-}
-
-pub type Rank = u8;
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Card {
-    suit: Suit,
-    rank: Rank
-}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Player {

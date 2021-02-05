@@ -260,3 +260,39 @@ pub static FOUR_DIAMONDS: Card = Card{rank: Rank::Four, suit: Suit::Diamonds};
 pub static THREE_DIAMONDS: Card = Card{rank: Rank::Three, suit: Suit::Diamonds};
 #[used]
 pub static TWO_DIAMONDS: Card = Card{rank: Rank::Two, suit: Suit::Diamonds};
+
+#[used]
+pub static CLUBS: Suit = Suit::Clubs;
+#[used]
+pub static SPADES: Suit = Suit::Spades;
+#[used]
+pub static HEARTS: Suit = Suit::Hearts;
+#[used]
+pub static DIAMONDS: Suit = Suit::Diamonds;
+
+#[used]
+pub static ACE: Rank = Rank::Ace;
+#[used]
+pub static KING: Rank = Rank::King;
+#[used]
+pub static QUEEN: Rank = Rank::Queen;
+#[used]
+pub static JACK: Rank = Rank::Jack;
+#[used]
+pub static TEN: Rank = Rank::Ten;
+#[used]
+pub static NINE: Rank = Rank::Nine;
+#[used]
+pub static EIGHT: Rank = Rank::Eight;
+#[used]
+pub static SEVEN: Rank = Rank::Seven;
+#[used]
+pub static SIX: Rank = Rank::Six;
+#[used]
+pub static FIVE: Rank = Rank::Five;
+#[used]
+pub static FOUR: Rank = Rank::Four;
+#[used]
+pub static THREE: Rank = Rank::Three;
+#[used]
+pub static TWO: Rank = Rank::Two;

@@ -1,4 +1,4 @@
 pub mod card;
 pub mod equity;
-pub mod evaluation;
+pub mod hand_type;
 pub mod util;

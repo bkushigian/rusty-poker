@@ -1,27 +1,28 @@
 /// This module is responsible for evaluationg of hand strength
 
 use crate::card::*;
+use crate::util::*;
 
 #[derive(Eq, PartialEq, Debug )]
 pub enum HandType {
     /// Ranks, sorted in descending order, of a high card hand
-    HighCard([Rank; 5]),
+    HighCard([Card; 5]),
     /// Pairing card, three kickers sorted high to low
-    Pair(Card, [Rank; 3]),
+    Pair([Card; 2], [Card; 3]),
     /// TwoPair(High pair card, low pair card, kicker)
-    TwoPair(Rank, Rank, Rank),
-    /// Trips(Trip card rank, kickers)
-    Trips(Rank, [Rank; 4]),
+    TwoPair([Card; 2], [Card; 2], Card),
+    /// Trips(Trip cards, kickers)
+    Trips([Card; 3], [Card; 2]),
     /// Straight(High rank)
-    Straight(Rank),
+    Straight([Card; 5]),
     /// Flush(Suit, Sorted ranks)
-    Flush(Suit, [Rank; 5]),
+    Flush([Card; 5]),
     /// FullHouse(trips rank, pair rank)
-    FullHouse(Rank, Rank),
-    /// quad rank, kicker rank
-    Quads(Rank, Rank),
+    FullHouse([Card; 3], [Card; 2]),
+    /// quads , kicker rank
+    Quads([Card; 4], Card),
     /// StraightFlush(Suit of flush, high rank of straight)
-    StraightFlush(Suit, Rank)
+    StraightFlush([Card; 5])
 }
 
 /// Group the cards by suit, ordered by rank.
@@ -77,11 +78,6 @@ pub fn group_by_suit(cards: &Vec<Card>) -> [Vec<Card>; 4] {
 ///
 /// let grouped = rusty_poker::evaluation::group_by_rank_freq(cards);
 /// assert_eq!(grouped[0].len(), 8);  // There are 8 cards that don't appear (2-9)
-/// assert!(grouped[0].contains(&Rank::Two));
-/// assert!(grouped[0].contains(&Rank::Three));
-/// assert!(grouped[0].contains(&Rank::Four));
-/// assert!(grouped[0].contains(&Rank::Five));
-/// assert!(grouped[0].contains(&Rank::Six));
 /// assert_eq!(grouped[1].len(), 3);  // There are three cards that appear once (T-Q)
 /// assert!(grouped[1].contains(&Rank::Ten));
 /// assert!(grouped[1].contains(&Rank::Jack));
@@ -112,45 +108,43 @@ pub fn group_by_rank_freq(cards: Vec<Card>) -> [Vec<Rank>; 5] {
 /// ```
 /// use rusty_poker::card::*;
 /// use rusty_poker::evaluation::*;
-/// let cards: Vec<Card> = vec!["Ac".parse().unwrap(), "Ks".parse().unwrap(), "Qc".parse().unwrap(), "Js".parse().unwrap(), "Tc".parse().unwrap(), "9s".parse().unwrap(), "8s".parse().unwrap()];
+/// let cards: Vec<Card> = vec![ACE_CLUBS, KING_SPADES, QUEEN_CLUBS, JACK_SPADES, TEN_DIAMONDS, NINE_SPADES, EIGHT_HEARTS];
 ///
 /// let straight = get_straight(&cards);
-/// assert_eq!(straight, Some(HandType::Straight(Rank::Ace)));
+/// assert_eq!(straight, Some(HandType::Straight([ACE_CLUBS, KING_SPADES, QUEEN_CLUBS, JACK_SPADES, TEN_DIAMONDS])));
 ///
 /// let cards: Vec<Card> = vec!["Ac".parse().unwrap(), "Ks".parse().unwrap(), "Tc".parse().unwrap(), "9s".parse().unwrap(), "7c".parse().unwrap(), "6s".parse().unwrap(), "3s".parse().unwrap()];
+/// let cards: Vec<Card> = vec![ACE_CLUBS, KING_SPADES, QUEEN_CLUBS, TEN_DIAMONDS, NINE_SPADES, EIGHT_HEARTS, FIVE_DIAMONDS];
 /// let no_straight = get_straight(&cards);
 /// assert_eq!(no_straight, None);
 ///
-/// let cards: Vec<Card> = vec!["Ac".parse().unwrap(), "Ks".parse().unwrap(), "Tc".parse().unwrap(), "5s".parse().unwrap(), "4c".parse().unwrap(), "3s".parse().unwrap(), "2s".parse().unwrap()];
+/// let cards: Vec<Card> = vec![ACE_SPADES, QUEEN_CLUBS, TEN_SPADES, FIVE_CLUBS, FOUR_HEARTS, THREE_DIAMONDS, TWO_DIAMONDS];
 /// let wheel = get_straight(&cards);
-/// assert_eq!(wheel, Some(HandType::Straight(Rank::Five)));
+/// assert_eq!(wheel, Some(HandType::Straight([FIVE_CLUBS, FOUR_HEARTS, THREE_DIAMONDS, TWO_DIAMONDS, ACE_SPADES])));
 /// ```
 pub fn get_straight(cards: &Vec<Card>) -> Option<HandType> {
     if cards.len() >= 5 {
         // Last rank seen, initialized to dummy value
         let mut last_rank = Rank::Two;
-        // Top of straight we are in, initialized to dummy value
-        let mut top_rank = Rank::Two;
-        // Size of straight we are in
-        let mut straight_size = 0;
-
+        // Keep track of the cards in the current straight
+        let mut straight = Vec::new();
         for card in cards {
             if card.rank == last_rank {
                 continue;
             }
             if !card.rank.preceeds(&last_rank) {
-                straight_size = 0;
-                top_rank = card.rank;
+                straight.clear();
             }
-            straight_size += 1;
+            straight.push(*card);
             last_rank = card.rank;
-            if straight_size == 5 {
-                return Some(HandType::Straight(top_rank))
+            if straight.len() == 5 {
+                return Some(HandType::Straight(card_vec_to_card_array(&straight).unwrap()));
             }
         }
         // Now, test for ace-low straight
-        if last_rank == Rank::Two && straight_size == 4 && cards.get(0).unwrap().rank == Rank::Ace {
-            return Some(HandType::Straight(Rank::Five));
+        if last_rank == Rank::Two && straight.len() ==  4 && cards.get(0).unwrap().rank == Rank::Ace {
+            straight.push(*cards.get(0).unwrap());
+            return Some(HandType::Straight(card_vec_to_card_array(&straight).unwrap()));
         }
     }
     None
@@ -164,12 +158,12 @@ pub fn get_straight(cards: &Vec<Card>) -> Option<HandType> {
 /// ```
 /// use rusty_poker::card::*;
 /// use rusty_poker::evaluation::*;
-/// let cards: Vec<Card> = vec!["Ac".parse().unwrap(), "Kc".parse().unwrap(), "Qc".parse().unwrap(), "Jc".parse().unwrap(), "Tc".parse().unwrap(), "9c".parse().unwrap(), "8c".parse().unwrap()];
+/// let cards: Vec<Card> = vec![ACE_CLUBS, KING_CLUBS, QUEEN_CLUBS, JACK_CLUBS, TEN_CLUBS, NINE_CLUBS, EIGHT_CLUBS];
 ///
 /// let straight_flush = get_straight_flush(&cards);
-/// assert_eq!(straight_flush, Some(HandType::StraightFlush(Suit::Clubs, Rank::Ace)));
+/// assert_eq!(straight_flush, Some(HandType::StraightFlush([ACE_CLUBS, KING_CLUBS, QUEEN_CLUBS, JACK_CLUBS, TEN_CLUBS])));
 ///
-/// let cards: Vec<Card> = vec!["Ac".parse().unwrap(), "Kc".parse().unwrap(), "Qc".parse().unwrap(), "Js".parse().unwrap(), "Tc".parse().unwrap(), "9c".parse().unwrap(), "8c".parse().unwrap()];
+/// let cards: Vec<Card> = vec![ACE_CLUBS, KING_CLUBS, QUEEN_CLUBS, JACK_SPADES, TEN_CLUBS, NINE_CLUBS, EIGHT_CLUBS];
 /// // There's a straight, and there's a flush, but there's no straight flush
 /// let no_straight_flush = get_straight_flush(&cards);
 /// assert_eq!(no_straight_flush, None);
@@ -179,7 +173,19 @@ pub fn get_straight_flush(cards: &Vec<Card>) -> Option<HandType> {
     for suit in all_suits().iter() {
         let suited_cards = &by_suit[*suit as usize];
         match get_straight(suited_cards) {
-            Some(HandType::Straight(rank)) => return Some(HandType::StraightFlush(*suit, rank)),
+            Some(HandType::Straight(cards)) => return Some(HandType::StraightFlush(cards)),
+            _ => (),
+        }
+    }
+    None
+}
+
+pub fn get_flush(cards: &Vec<Card>) -> Option<HandType> {
+    let by_suit = group_by_suit(&cards);
+    for suit in all_suits().iter() {
+        let suited_cards = &by_suit[*suit as usize];
+        match card_vec_to_card_array(suited_cards) {
+            Some(arr) => return Some(HandType::Flush(arr)),
             _ => (),
         }
     }

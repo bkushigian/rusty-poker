@@ -58,8 +58,8 @@ impl Rank {
 
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
 pub struct Card {
-    pub suit: Suit,
-    pub rank: Rank
+    pub rank: Rank,
+    pub suit: Suit
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -155,3 +155,108 @@ mod tests {
         assert_eq!(Card::from_str("6h"), Ok(Card{suit: Suit::Hearts, rank: Rank::Six}));
     }
 }
+
+#[used]
+pub static ACE_SPADES: Card = Card{rank: Rank::Ace, suit: Suit::Spades};
+#[used]
+pub static KING_SPADES: Card = Card{rank: Rank::King, suit: Suit::Spades};
+#[used]
+pub static QUEEN_SPADES: Card = Card{rank: Rank::Queen, suit: Suit::Spades};
+#[used]
+pub static JACK_SPADES: Card = Card{rank: Rank::Jack, suit: Suit::Spades};
+#[used]
+pub static TEN_SPADES: Card = Card{rank: Rank::Ten, suit: Suit::Spades};
+#[used]
+pub static NINE_SPADES: Card = Card{rank: Rank::Nine, suit: Suit::Spades};
+#[used]
+pub static EIGHT_SPADES: Card = Card{rank: Rank::Eight, suit: Suit::Spades};
+#[used]
+pub static SEVEN_SPADES: Card = Card{rank: Rank::Seven, suit: Suit::Spades};
+#[used]
+pub static SIX_SPADES: Card = Card{rank: Rank::Six, suit: Suit::Spades};
+#[used]
+pub static FIVE_SPADES: Card = Card{rank: Rank::Five, suit: Suit::Spades};
+#[used]
+pub static FOUR_SPADES: Card = Card{rank: Rank::Four, suit: Suit::Spades};
+#[used]
+pub static THREE_SPADES: Card = Card{rank: Rank::Three, suit: Suit::Spades};
+#[used]
+pub static TWO_SPADES: Card = Card{rank: Rank::Two, suit: Suit::Spades};
+#[used]
+pub static ACE_CLUBS: Card = Card{rank: Rank::Ace, suit: Suit::Clubs};
+#[used]
+pub static KING_CLUBS: Card = Card{rank: Rank::King, suit: Suit::Clubs};
+#[used]
+pub static QUEEN_CLUBS: Card = Card{rank: Rank::Queen, suit: Suit::Clubs};
+#[used]
+pub static JACK_CLUBS: Card = Card{rank: Rank::Jack, suit: Suit::Clubs};
+#[used]
+pub static TEN_CLUBS: Card = Card{rank: Rank::Ten, suit: Suit::Clubs};
+#[used]
+pub static NINE_CLUBS: Card = Card{rank: Rank::Nine, suit: Suit::Clubs};
+#[used]
+pub static EIGHT_CLUBS: Card = Card{rank: Rank::Eight, suit: Suit::Clubs};
+#[used]
+pub static SEVEN_CLUBS: Card = Card{rank: Rank::Seven, suit: Suit::Clubs};
+#[used]
+pub static SIX_CLUBS: Card = Card{rank: Rank::Six, suit: Suit::Clubs};
+#[used]
+pub static FIVE_CLUBS: Card = Card{rank: Rank::Five, suit: Suit::Clubs};
+#[used]
+pub static FOUR_CLUBS: Card = Card{rank: Rank::Four, suit: Suit::Clubs};
+#[used]
+pub static THREE_CLUBS: Card = Card{rank: Rank::Three, suit: Suit::Clubs};
+#[used]
+pub static TWO_CLUBS: Card = Card{rank: Rank::Two, suit: Suit::Clubs};
+#[used]
+pub static ACE_HEARTS: Card = Card{rank: Rank::Ace, suit: Suit::Hearts};
+#[used]
+pub static KING_HEARTS: Card = Card{rank: Rank::King, suit: Suit::Hearts};
+#[used]
+pub static QUEEN_HEARTS: Card = Card{rank: Rank::Queen, suit: Suit::Hearts};
+#[used]
+pub static JACK_HEARTS: Card = Card{rank: Rank::Jack, suit: Suit::Hearts};
+#[used]
+pub static TEN_HEARTS: Card = Card{rank: Rank::Ten, suit: Suit::Hearts};
+#[used]
+pub static NINE_HEARTS: Card = Card{rank: Rank::Nine, suit: Suit::Hearts};
+#[used]
+pub static EIGHT_HEARTS: Card = Card{rank: Rank::Eight, suit: Suit::Hearts};
+#[used]
+pub static SEVEN_HEARTS: Card = Card{rank: Rank::Seven, suit: Suit::Hearts};
+#[used]
+pub static SIX_HEARTS: Card = Card{rank: Rank::Six, suit: Suit::Hearts};
+#[used]
+pub static FIVE_HEARTS: Card = Card{rank: Rank::Five, suit: Suit::Hearts};
+#[used]
+pub static FOUR_HEARTS: Card = Card{rank: Rank::Four, suit: Suit::Hearts};
+#[used]
+pub static THREE_HEARTS: Card = Card{rank: Rank::Three, suit: Suit::Hearts};
+#[used]
+pub static TWO_HEARTS: Card = Card{rank: Rank::Two, suit: Suit::Hearts};
+#[used]
+pub static ACE_DIAMONDS: Card = Card{rank: Rank::Ace, suit: Suit::Diamonds};
+#[used]
+pub static KING_DIAMONDS: Card = Card{rank: Rank::King, suit: Suit::Diamonds};
+#[used]
+pub static QUEEN_DIAMONDS: Card = Card{rank: Rank::Queen, suit: Suit::Diamonds};
+#[used]
+pub static JACK_DIAMONDS: Card = Card{rank: Rank::Jack, suit: Suit::Diamonds};
+#[used]
+pub static TEN_DIAMONDS: Card = Card{rank: Rank::Ten, suit: Suit::Diamonds};
+#[used]
+pub static NINE_DIAMONDS: Card = Card{rank: Rank::Nine, suit: Suit::Diamonds};
+#[used]
+pub static EIGHT_DIAMONDS: Card = Card{rank: Rank::Eight, suit: Suit::Diamonds};
+#[used]
+pub static SEVEN_DIAMONDS: Card = Card{rank: Rank::Seven, suit: Suit::Diamonds};
+#[used]
+pub static SIX_DIAMONDS: Card = Card{rank: Rank::Six, suit: Suit::Diamonds};
+#[used]
+pub static FIVE_DIAMONDS: Card = Card{rank: Rank::Five, suit: Suit::Diamonds};
+#[used]
+pub static FOUR_DIAMONDS: Card = Card{rank: Rank::Four, suit: Suit::Diamonds};
+#[used]
+pub static THREE_DIAMONDS: Card = Card{rank: Rank::Three, suit: Suit::Diamonds};
+#[used]
+pub static TWO_DIAMONDS: Card = Card{rank: Rank::Two, suit: Suit::Diamonds};

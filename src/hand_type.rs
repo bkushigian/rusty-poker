@@ -381,12 +381,12 @@ pub fn get_high_card(cards: &Vec<Card>) -> Option<HandType> {
 /// use rusty_poker::card::*;
 /// use rusty_poker::hand_type::*;
 ///
-/// let trips = hand_type(&[ACE_SPADES, ACE_CLUBS], &[ACE_DIAMONDS, NINE_HEARTS, EIGHT_CLUBS, FIVE_CLUBS, FOUR_CLUBS]);
+/// let trips = hand_type(&[ACE_SPADES, ACE_CLUBS], &vec![ACE_DIAMONDS, NINE_HEARTS, EIGHT_CLUBS, FIVE_CLUBS, FOUR_CLUBS]);
 /// assert_eq!(trips, HandType::Trips([ACE_SPADES, ACE_CLUBS, ACE_DIAMONDS], [NINE_HEARTS, EIGHT_CLUBS]));
-/// let pair = hand_type(&[ACE_SPADES, ACE_CLUBS], &[KING_DIAMONDS, NINE_HEARTS, EIGHT_CLUBS, FIVE_CLUBS, FOUR_CLUBS]);
+/// let pair = hand_type(&[ACE_SPADES, ACE_CLUBS], &vec![KING_DIAMONDS, NINE_HEARTS, EIGHT_CLUBS, FIVE_CLUBS, FOUR_CLUBS]);
 /// assert_eq!(pair, HandType::Pair([ACE_SPADES, ACE_CLUBS], [KING_DIAMONDS, NINE_HEARTS, EIGHT_CLUBS]));
 /// ```
-pub fn hand_type(hand: &HoleCards, board: &[Card; 5]) -> HandType {
+pub fn hand_type(hand: &HoleCards, board: &Vec<Card>) -> HandType {
     let mut cards = Vec::new();
     cards.extend_from_slice(hand);
     cards.extend_from_slice(board);

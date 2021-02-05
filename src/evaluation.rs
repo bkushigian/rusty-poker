@@ -58,44 +58,38 @@ pub fn group_by_suit(cards: &Vec<Card>) -> [Vec<Card>; 4] {
     grouped_by_suit
 }
 
-/// Return an array indexed by rank frequency, containing a vec of ranks that
-/// occur at the given frequency.
+/// Return an array, indexed by rank frequency, containing a vec of vecs of
+/// cards that occur at the given frequency.
 ///
-/// Given n cards, a given card rank can occur at most 4 times. This function
-/// takes that list of cards and returns a length 5 array of vecs, where the vec
-/// at index i contains all ranks that occured i times in the `cards` input.
+/// That is, the returned array has at index `f` a `Vec` which contains
+/// `Vec<Card>`s of length `f` where each card has the same rank.
+///
 ///
 /// # Example
 /// ```
-/// use rusty_poker::card::{Card, Rank};
-/// let cards: Vec<Card> = vec!["Ac".parse().unwrap(),
-///                             "Kc".parse().unwrap(),
-///                             "Qc".parse().unwrap(),
-///                             "Jc".parse().unwrap(),
-///                             "Tc".parse().unwrap(),
-///                             "As".parse().unwrap(),
-///                             "Kd".parse().unwrap()];
-///
-/// let grouped = rusty_poker::evaluation::group_by_rank_freq(cards);
-/// assert_eq!(grouped[0].len(), 8);  // There are 8 cards that don't appear (2-9)
-/// assert_eq!(grouped[1].len(), 3);  // There are three cards that appear once (T-Q)
-/// assert!(grouped[1].contains(&Rank::Ten));
-/// assert!(grouped[1].contains(&Rank::Jack));
-/// assert!(grouped[1].contains(&Rank::Queen));
-/// assert_eq!(grouped[2].len(), 2);  // There are two cards that appear twice (A, K)
-/// assert!(grouped[2].contains(&Rank::King));
-/// assert!(grouped[2].contains(&Rank::Ace));
+/// use rusty_poker::card::*;
+/// use rusty_poker::evaluation::*;
+/// let cards: Vec<Card> = vec![KING_CLUBS,
+///                             KING_SPADES,
+///                             KING_HEARTS,
+///                             QUEEN_CLUBS,
+///                             QUEEN_SPADES,
+///                             JACK_CLUBS,
+///                             TEN_CLUBS];
+/// let grouped = group_by_rank_freq(&cards);
+/// assert_eq!(grouped[1], vec![vec![JACK_CLUBS], vec![TEN_CLUBS]]);
+/// assert_eq!(grouped[2], vec![vec![QUEEN_CLUBS, QUEEN_SPADES]]);
+/// assert_eq!(grouped[3], vec![vec![KING_CLUBS, KING_SPADES, KING_HEARTS]]);
 /// ```
-pub fn group_by_rank_freq(cards: Vec<Card>) -> [Vec<Rank>; 5] {
-    let mut grouped_by_rank: [u32; 15] = [0;15];
-    let mut grouped_by_rank_freq: [Vec<Rank>; 5] = Default::default();
+pub fn group_by_rank_freq(cards: &Vec<Card>) -> [Vec<Vec<Card>>; 5] {
+    let mut grouped_by_rank: [Vec<Card>; 15] = Default::default();
+    let mut grouped_by_rank_freq: [Vec<Vec<Card>>; 5] = Default::default();
     for card in cards {
-        grouped_by_rank[card.rank as usize] += 1;
+        grouped_by_rank[card.rank as usize].push(*card);
     }
-    for rank in 2..15 {
-        let n_of_rank = grouped_by_rank[rank];
-        assert!(n_of_rank < 5);
-        grouped_by_rank_freq[n_of_rank as usize].push(Rank::from_u32(rank as u32));
+    for cv in grouped_by_rank.iter().rev() {
+        assert!(cv.len() < 5);
+        grouped_by_rank_freq[cv.len() as usize].push(cv.to_vec());
     }
     grouped_by_rank_freq
 }
@@ -180,6 +174,23 @@ pub fn get_straight_flush(cards: &Vec<Card>) -> Option<HandType> {
     None
 }
 
+/// Find the highest possible flush
+///
+/// Cards _must_ be reverse sorted according to rank
+///
+/// # Example
+/// ```
+/// use rusty_poker::card::*;
+/// use rusty_poker::evaluation::*;
+/// let cards: Vec<Card> = vec![ACE_SPADES, KING_CLUBS, TEN_CLUBS, TEN_SPADES, NINE_CLUBS, FIVE_CLUBS, FOUR_CLUBS];
+///
+/// let flush = get_flush(&cards);
+/// assert_eq!(flush, Some(HandType::Flush([KING_CLUBS, TEN_CLUBS, NINE_CLUBS, FIVE_CLUBS, FOUR_CLUBS])));
+///
+/// let cards: Vec<Card> = vec![ACE_CLUBS, ACE_SPADES, KING_CLUBS, QUEEN_CLUBS, TEN_CLUBS, NINE_CLUBS, EIGHT_CLUBS];
+/// let flush = get_flush(&cards);
+/// assert_eq!(flush, Some(HandType::Flush([ACE_CLUBS, KING_CLUBS, QUEEN_CLUBS, TEN_CLUBS, NINE_CLUBS])));
+/// ```
 pub fn get_flush(cards: &Vec<Card>) -> Option<HandType> {
     let by_suit = group_by_suit(&cards);
     for suit in all_suits().iter() {
@@ -192,9 +203,36 @@ pub fn get_flush(cards: &Vec<Card>) -> Option<HandType> {
     None
 }
 
-pub fn hand_strength(hand: &HoleCards, board: &[Card; 5]) {
+pub fn get_quads(cards: &Vec<Card>) -> Option<HandType> {
+    let grouped_by_rank = group_by_rank_freq(cards);
+    //if grouped_by_rank[4].get(0)
+    None
+}
+
+pub fn get_full_house(cards: &Vec<Card>) -> Option<HandType> {
+    None
+}
+
+pub fn get_trips_or_pairs(cards: &Vec<Card>) -> Option<HandType> {
+    None
+}
+
+pub fn get_high_card(cards: &Vec<Card>) -> Option<HandType> {
+    None
+}
+
+
+pub fn hand_strength(hand: &HoleCards, board: &[Card; 5]) -> HandType {
     let mut cards = Vec::new();
     cards.extend_from_slice(hand);
     cards.extend_from_slice(board);
     cards.sort_by(|a, b| b.cmp(a));
+
+    return get_straight_flush(&cards)
+        .or_else(|| get_quads(&cards))
+        .or_else(|| get_full_house(&cards))
+        .or_else(|| get_flush(&cards))
+        .or_else(|| get_straight(&cards))
+        .or_else(|| get_trips_or_pairs(&cards))
+        .or_else(|| get_high_card(&cards)).unwrap();
 }
